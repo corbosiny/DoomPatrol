@@ -1,4 +1,4 @@
 ########################################
 ####### Ignore ipython checkpoints ######
 *checkpoint*
-
+*.swp
