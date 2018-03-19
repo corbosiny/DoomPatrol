@@ -19,6 +19,7 @@ class TweetCollector():
 
     def getTweets(self, subject, city, numTweets= 100):
         geoCode = TweetCollector.getGeoCode(city)
+        print(geoCode)
         tweets = self.api.search(subject, count=numTweets, show_user=False, rpp=numTweets, geocode= geoCode)
         return tweets
 
@@ -29,7 +30,7 @@ class TweetCollector():
 
 
     def getGeoCode(city):
-        return "{0},{1},{2}mi".format(city.longitude,city.latitude,city.radius)
+        return "{0},{1},{2}mi".format(city.longitude, city.latitude, city.radius)
 
 
     def getPolarityAnalysis(tweets):
@@ -70,13 +71,12 @@ if __name__ == "__main__":
 
     for tweet in tweets:
         try:
-            print(tweet.text, end= '\n\n\n')
+            print(tweet.text, end= "\n\n\n")
         except:
             pass
             
     sentiments = TweetCollector.getPolarityAnalysis(tweets)
-    print("sentiment length",len(sentiments))
+    print("sentiment length", len(sentiments))
 
     subjects = TweetCollector.getSubjectivityAnalysis(tweets)
     print("subject length", len(subjects))
-

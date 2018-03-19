@@ -16,12 +16,12 @@ class DisasterAnalyzer():
 
     def analyzeCrisisLocations(self, cityArray):
         tweetsPerCity = self.collectTweets(cityArray)
-
-        print(len(tweetsPerCity))
-        for tweets in tweetsPerCity:
-            print(tweets)
                 
         crisisScores = DisasterAnalyzer.generateCrisisScores(tweetsPerCity)
+
+        for tweets in tweetsPerCity:
+            print(len(tweets))
+            
         for score in crisisScores:
             print(score)
             
@@ -31,18 +31,25 @@ class DisasterAnalyzer():
         
 
     def collectTweets(self, cityArray):
-        tweetsPerCity = [self.tweetBot.getTweets("help", city) for city in cityArray]
+        tweetsPerCity = [self.tweetBot.getTweets("trump", city) for city in cityArray]
         return tweetsPerCity
 
 
     def generateCrisisScores(tweetsPerCity):
-        crisisScores = [[TweetCollector.getAveragePolarity(setOfTweets), TweetCollector.getAverageSubjectivity(setOfTweets)] for setOfTweets in tweetsPerCity]
+        crisisScores = []
+        for setOfTweets in tweetsPerCity:
+            averagePolarity = TweetCollector.getAveragePolarity(setOfTweets)
+            averageSubjectivity = TweetCollector.getAverageSubjectivity(setOfTweets)
+            crisisScores.append([averagePolarity, averageSubjectivity])
         return crisisScores
 
     def assignCrisisScores(cityArray, crisisScores):
         for i in range(len(cityArray)):
             cityArray[i].assignCrisisScores(crisisScores[i][0], crisisScores[i][1])
         return cityArray
+
+
+
 
 def enterCitys(searchCount):
     searchArray = []
@@ -55,11 +62,27 @@ def enterCitys(searchCount):
 
     return searchArray
 
+def parseCitys(fileName = "citys.txt"):
+    searchArray = []
+    with open(fileName, "r") as cityFile:
+        rows = cityFile.readlines()
+        rows = [row.strip() for row in rows]
+        for row in rows:
+            cityParameters = row.split(",")
+            longitude = cityParameters[0]
+            latitude = cityParameters[1]
+            radius = cityParameters[2]
+            name = cityParameters[3]
+            
+            searchArray.append(City(longitude, latitude, radius, name))
+                    
+    return searchArray
+
+
 
 
 if __name__ == "__main__":
-    searchCount = int(input("Enter how many searches you want to do: "))
-    cityArray = enterCitys(searchCount)
+    cityArray = parseCitys()
     tweetBot = TweetCollector()
 
     analyzer = DisasterAnalyzer(cityArray, tweetBot)
